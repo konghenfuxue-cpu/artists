@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f7f6f2"><title>拾光 · 画师与绘画</title><link rel="canonical" href="https://heibeixue.me/artists/"><meta name="description" content="收藏跨平台画师账号与绘画作品。"><link rel="stylesheet" href="style.css"></head>
+<body>
+<a class="skip" href="#content">跳到收藏内容</a>
+<aside class="sidebar">
+  <a class="brand" href="#" aria-label="拾光首页"><span class="brand-mark">✳</span><span>拾光<small>ARTISTS & ARTWORKS</small></span></a>
+  <div class="shelf-label">我的画师收藏 <span>画师收藏</span></div>
+  <nav id="navigation" aria-label="收藏分类"></nav>
+  <div class="sidebar-divider"></div>
+  <button class="nav-item" id="star-nav"><span class="nav-icon">☆</span><span>特别喜欢</span><span class="count" id="star-count"></span></button>
+  <button class="nav-item" id="later-nav"><span class="nav-icon">◷</span><span>留待以后</span><span class="count" id="later-count"></span></button>
+  <div class="sidebar-note"><span class="tiny-flower">✳</span><p>收藏，是给未来的自己<br>留下一点喜欢的线索。</p><span>KEEP WHAT MOVES YOU.</span></div>
+  <div class="backup-controls"><button id="export-button">↓ 导出备份</button><button id="import-button">↑ 导入</button><input id="import-file" type="file" accept="application/json,.json" hidden></div>
+  <div class="local-note">你的修改仅存此浏览器 · 可导出迁移</div>
+</aside>
+<div class="workspace">
+  <header class="topbar"><span class="breadcrumb">我的空间 <span>/</span> <b id="breadcrumb">画师与绘画</b></span><button class="primary" id="add-button"><span>＋</span> 添加收藏</button></header>
+  <main id="content" tabindex="-1">
+    <section class="intro"><div><div class="eyebrow">ARTISTS YOU LOVE. ART YOU KEEP.</div><h1 id="page-title">把喜欢的，<span>留在这里。</span></h1><p id="page-subtitle">收藏喜欢的画师，在各个平台找到他们，慢慢收下喜欢的绘画。</p></div><div class="intro-stamp" aria-hidden="true"><span>个人收藏</span><b>✳</b><span>慢慢积累 · 常常回看</span></div></section>
+    <div class="collection-toolbar"><div class="search-wrap"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="寻找账号、作品、标签或一句备注…" aria-label="搜索收藏"><kbd>/</kbd></div><div class="toolbar-right"><select id="sort" aria-label="排序"><option value="curated">收藏顺序</option><option value="newest">最近添加</option><option value="title">名称排序</option></select><div class="view-toggle" aria-label="布局"><button id="grid-view" class="active" aria-label="卡片视图" aria-pressed="true">▦</button><button id="list-view" aria-label="列表视图" aria-pressed="false">☰</button></div></div></div>
+    <div id="tags" class="tag-list" aria-label="按标签筛选"></div>
+    <div class="section-title"><h2 id="collection-heading">画师与绘画 <span id="result-count"></span></h2><span id="result-caption">每一次心动，都有迹可循。</span></div>
+    <div id="storage-warning" class="warning" hidden>浏览器未能保存更改，请及时导出备份。</div>
+    <section id="cards" class="cards" aria-label="收藏内容"></section>
+    <div id="empty" class="empty" hidden><span>⌕</span><h3>这里还没有找到收藏</h3><p>试着换个词，或把喜欢的链接放进来。</p><button id="clear-filter">清除筛选</button></div>
+    <footer class="page-footer"><span>拾光 · 让喜欢有处可寻</span><span>手动收藏，按自己的节奏。</span></footer>
+  </main>
+</div>
+<dialog id="editor"><form id="collection-form"><div class="dialog-head"><div><span class="eyebrow">A NEW FIND</span><h2 id="editor-title">留下一份喜欢</h2></div><button type="button" class="icon-button" id="close-editor" aria-label="关闭">×</button></div><input type="hidden" name="id"><div class="form-row"><label>收藏类型<select name="type"><option value="account">画师账号</option><option value="work">绘画作品</option></select></label><label>所属平台<input name="platform" placeholder="X / B站 / 个人网站" maxlength="40" required></label></div><label>名称<input name="title" placeholder="画师名字或绘画作品名称" maxlength="160" required></label><label>原始链接<input name="url" type="url" placeholder="https://…" required></label><div class="form-row"><label>作者 / 账号<input name="author" placeholder="可选" maxlength="100"></label><label>关联的已收藏账号<select name="creatorId" id="creator-select"><option value="">不关联</option></select></label></div><label>标签 <span class="optional">用逗号分隔</span><input name="tags" placeholder="插画，人物，水彩" maxlength="240"></label><label>为什么收藏它？<textarea name="note" rows="3" placeholder="喜欢这位画师或这幅画的什么地方？" maxlength="2000"></textarea></label><label>封面图片链接 <span class="optional">可选，使用有权引用的图片</span><input name="image" type="text" inputmode="url" placeholder="https://…"></label><div class="form-flags"><label><input name="starred" type="checkbox"> 特别喜欢</label><label><input name="later" type="checkbox"> 留待以后</label></div><p class="form-error" id="form-error" role="alert"></p><div class="dialog-actions"><button type="button" id="delete-button" class="danger" hidden>删除收藏</button><button type="button" id="cancel-editor" class="secondary">取消</button><button type="submit" class="primary">保存收藏</button></div></form></dialog>
+<dialog id="detail"><div id="detail-body"></div></dialog>
+<div id="toast" class="toast" role="status" hidden><span></span><button hidden>撤销</button></div>
+<script src="data.js"></script><script src="app.js"></script><script src="lookup.js"></script><script src="lookup-ui.js"></script>
+</body></html>
