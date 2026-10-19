@@ -13,6 +13,18 @@ let records=seed;let storageFailed=false;
 try{const saved=localStorage.getItem(KEY);if(saved){const parsed=JSON.parse(saved);if(!Array.isArray(parsed))throw Error();records=parsed.map(validateRecord);if(new Set(records.map(x=>x.id)).size!==records.length)throw Error()}}catch{storageFailed=true}
 try{if(!localStorage.getItem('shiguang-seed-iren-v1')){const added=seed.find(x=>x.id==='iren');if(added&&!records.some(x=>x.id===added.id||x.url.replace(/\/$/,'')===added.url))records.push({...added,tags:[...added.tags]});localStorage.setItem(KEY,JSON.stringify(records));localStorage.setItem('shiguang-seed-iren-v1','1')}}catch{storageFailed=true}
 for(const x of records){if(artistArt[x.id]&&(!x.image||x.image.includes('HU0v0SZ')))x.image=artistArt[x.id].image}
+// Add only this user-requested batch; preserve existing notes, IDs and records.
+try {
+ const batch=['x-116180kOc','pixiv-74951457','x-work-2111715403252797792','pixiv-work-150476106'];
+ for(const id of batch){
+  const added=seed.find(x=>x.id===id);
+  if(!added||records.some(x=>x.id===id||x.url.replace(/\/$/,'')===added.url))continue;
+  const copy={...added,tags:[...added.tags]};
+  if(copy.creatorId){const creator=seed.find(x=>x.id===copy.creatorId);const existing=creator&&records.find(x=>x.type==='account'&&x.url.replace(/\/$/,'')===creator.url);if(existing)copy.creatorId=existing.id;}
+  records.push(copy);
+ }
+ localStorage.setItem(KEY,JSON.stringify(records));
+}catch{storageFailed=true}
 const state={type:'all',special:'',tag:'',query:'',sort:'curated',view:'grid'};let toastTimer,undoAction;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(records));storageFailed=false}catch{storageFailed=true}$('#storage-warning').hidden=!storageFailed}
 function notify(message,undo){clearTimeout(toastTimer);$('#toast').hidden=false;$('#toast span').textContent=message;$('#toast button').hidden=!undo;undoAction=undo;toastTimer=setTimeout(()=>{$('#toast').hidden=true;undoAction=null},undo?10000:3500)}
