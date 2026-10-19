@@ -3,7 +3,13 @@ const KEY='shiguang-artists-v1';
 const TYPES={account:{label:'画师账号',icon:'♙'},work:{label:'绘画作品',icon:'▧'}};
 const imageKohaku='images/kohaku.jpg';
 const artistArt={iren:{image:'images/iren.jpg',title:'Pixiv 主页封面',url:'https://www.pixiv.net/users/34209175'},toko:{image:'images/toko.jpg',title:'Little Autumn Things',url:'https://x.com/7_Toto16/status/2111370348553969973'},kohaku:{image:imageKohaku,title:'水下插画（收藏名）',url:'https://x.com/amayadokohaku/status/2111396381395235039'}};
-function safeImage(raw){return /^images\/(toko|kohaku|iren)\.jpg$/.test(raw||'')?raw:safeUrl(raw,true)}
+Object.assign(artistArt,{
+ 'x-116180kOc':{image:'images/kokoc-avatar.jpg',title:'KOKOC 头像',url:'https://x.com/116180kOc'},
+ 'x-work-2111715403252797792':{image:'images/kokoc-roche.jpg',title:'Roche limit',url:'https://x.com/116180kOc/status/2111715403252797792'},
+ 'pixiv-74951457':{image:'images/yunayu-avatar.png',title:'yunayu 头像',url:'https://www.pixiv.net/users/74951457'},
+ 'pixiv-work-150476106':{image:'images/yunayu-150476106.jpg',title:'Untitled',url:'https://www.pixiv.net/artworks/150476106'}
+});
+function safeImage(raw){return /^images\/(?:(?:toko|kohaku|iren|kokoc-avatar|kokoc-roche|yunayu-150476106)\.jpg|yunayu-avatar\.png)$/.test(raw||'')?raw:safeUrl(raw,true)}
 const seed=window.SHELF_SEED.map(x=>({...x,image:artistArt[x.id]?.image||'',tags:[...x.tags]}));
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -25,6 +31,15 @@ try {
  }
  localStorage.setItem(KEY,JSON.stringify(records));
 }catch{storageFailed=true}
+// Fill verified metadata only where original placeholders remain; retain personal edits.
+const verifiedTitles={
+ 'x-116180kOc':['@116180kOc','KOKOC'],
+ 'x-work-2111715403252797792':['张力很好的作品（收藏名）','Roche limit'],
+ 'pixiv-74951457':['Pixiv 画师 · 74951457','yunayu'],
+ 'pixiv-work-150476106':['温暖治愈的作品（收藏名）','Untitled']
+};
+for(const x of records){const pair=verifiedTitles[x.id];if(pair&&x.title===pair[0])x.title=pair[1];if(artistArt[x.id]&&!x.image)x.image=artistArt[x.id].image;}
+try{localStorage.setItem(KEY,JSON.stringify(records))}catch{storageFailed=true}
 const state={type:'all',special:'',tag:'',query:'',sort:'curated',view:'grid'};let toastTimer,undoAction;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(records));storageFailed=false}catch{storageFailed=true}$('#storage-warning').hidden=!storageFailed}
 function notify(message,undo){clearTimeout(toastTimer);$('#toast').hidden=false;$('#toast span').textContent=message;$('#toast button').hidden=!undo;undoAction=undo;toastTimer=setTimeout(()=>{$('#toast').hidden=true;undoAction=null},undo?10000:3500)}
